@@ -1,0 +1,21 @@
+name: anticapture-indexer
+runtime: 
+  name: nodejs
+  options:
+    typescript: true
+description: AWS infrastructure for Anticapture Indexer using ECS Fargate
+template:
+  description: A minimal AWS infrastructure for the Anticapture Indexer
+  config:
+    aws:region:
+      description: The AWS region to deploy to
+      default: us-east-1
+    indexer:environment:
+      description: The deployment environment (dev, staging, prod)
+      default: dev
+    indexer:daoId:
+      description: The DAO ID to index (ENS, UNI, ARB)
+      default: ENS
+    indexer:network:
+      description: The network to index (ethereum, arbitrum)
+      default: ethereum

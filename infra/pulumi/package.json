@@ -1,0 +1,25 @@
+{
+  "name": "anticapture-indexer-infrastructure",
+  "version": "1.0.0",
+  "description": "AWS infrastructure for Anticapture Indexer using Pulumi",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "deploy": "pulumi up",
+    "destroy": "pulumi destroy",
+    "preview": "pulumi preview",
+    "config": "pulumi config"
+  },
+  "dependencies": {
+    "@pulumi/aws": "^6.20.0",
+    "@pulumi/awsx": "^2.8.0",
+    "@pulumi/pulumi": "^3.105.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
