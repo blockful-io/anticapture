@@ -1,0 +1,19 @@
+query Daos {
+  daos {
+    id
+    name
+    symbol
+    totalSupply
+    circulatingSupply
+  }
+}
+
+query Daos($where: daoFilter) {
+  daos(where: $where) {
+    id
+    name
+    symbol
+    totalSupply
+    circulatingSupply
+  }
+}

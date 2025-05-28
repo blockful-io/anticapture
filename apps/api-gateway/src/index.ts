@@ -1,11 +1,16 @@
+import { createServer } from 'node:http';
+import { writeFileSync } from 'fs';
+
+import { printSchema } from 'graphql';
 import { getMesh } from '@graphql-mesh/runtime';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
-import { createServer } from 'node:http';
 
-import config from '../meshrc';
+import config from '../.meshrc';
 
 const bootstrap = async () => {
   const mesh = await getMesh(await config)
+
+  writeFileSync('schema.graphql', printSchema(mesh.schema));
 
   const handler = createMeshHTTPHandler({
     baseDir: __dirname,
