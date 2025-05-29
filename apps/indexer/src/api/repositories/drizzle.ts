@@ -29,8 +29,8 @@ export class DrizzleRepository {
         AND db."metricType" = ${metricType}
         ORDER BY db."date" DESC LIMIT 1
       )
-      SELECT COALESCE(old_data.old_amount, 0) AS oldValue,
-             COALESCE(current_data.current_amount, 0) AS currentValue
+      SELECT COALESCE(old_data.old_amount, 0) AS "oldValue",
+             COALESCE(current_data.current_amount, 0) AS "currentValue"
       FROM current_data
       LEFT JOIN old_data ON 1=1;
     `;
