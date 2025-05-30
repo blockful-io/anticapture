@@ -14,6 +14,7 @@ interface BannerAlertProps {
   };
   storageKey: string;
   variant?: "default" | "highlight";
+  className?: string;
 }
 
 const mapVariantToColor = {
@@ -27,6 +28,7 @@ export const BannerAlert = ({
   link,
   storageKey,
   variant = "default",
+  className,
 }: BannerAlertProps) => {
   // Initialize as null to prevent rendering during hydration
   const [isVisible, setIsVisible] = useState<boolean | null>(null);
@@ -50,6 +52,7 @@ export const BannerAlert = ({
       className={cn(
         "text-tangerine flex w-full items-center justify-between gap-2 px-3 py-2 text-sm",
         mapVariantToColor[variant],
+        className,
       )}
     >
       <div className="flex items-center gap-2 tracking-wider sm:flex-row">

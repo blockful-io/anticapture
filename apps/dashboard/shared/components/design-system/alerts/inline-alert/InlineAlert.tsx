@@ -5,6 +5,7 @@ import { AlertCircle, AlertTriangle, Info } from "lucide-react";
 interface InlineAlertProps {
   text: string;
   variant: "info" | "warning" | "error";
+  className?: string;
 }
 
 const mapVariantToIcon = {
@@ -25,9 +26,18 @@ const mapVariantToIcon = {
   },
 };
 
-export const InlineAlert = ({ text, variant = "info" }: InlineAlertProps) => {
+export const InlineAlert = ({
+  text,
+  variant = "info",
+  className,
+}: InlineAlertProps) => {
   return (
-    <div className="w-full overflow-hidden rounded-md bg-[#18181B]">
+    <div
+      className={cn(
+        "w-full overflow-hidden rounded-md bg-[#18181B]",
+        className,
+      )}
+    >
       <CardDescription
         className={cn(
           "flex w-full items-center gap-2 rounded-lg p-2 sm:items-center",
