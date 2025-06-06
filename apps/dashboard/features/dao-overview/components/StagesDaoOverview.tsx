@@ -65,7 +65,7 @@ export const StagesDaoOverview = ({
   return (
     <div className="relative w-full py-0 sm:w-full">
       <div
-        className="border-light-dark bg-light-dark flex items-center justify-between gap-1 rounded-lg border-b p-2 sm:border-none sm:py-0.5"
+        className="border-light-dark bg-surface-contrast flex items-center justify-between gap-1 rounded-lg border-b p-2 sm:border-none sm:py-0.5"
         onMouseLeave={() => !isMobile && setShowTooltip(false)}
       >
         <div className="flex flex-col justify-start gap-1 px-1 sm:flex-row sm:items-center">
@@ -73,7 +73,7 @@ export const StagesDaoOverview = ({
           <div className="flex gap-2">
             <span
               className={cn(
-                "font-mono text-sm font-medium uppercase tracking-wider",
+                "font-mono text-sm font-medium tracking-wider uppercase",
                 {
                   "text-error": currentStage === Stage.ZERO,
                   "text-warning": currentStage === Stage.ONE,
@@ -88,17 +88,17 @@ export const StagesDaoOverview = ({
           {/* Items to next stage */}
           <div className="flex justify-start">
             <button
-              className="border-foreground group cursor-pointer border-b border-dashed font-mono text-sm font-medium text-white duration-300 hover:border-white"
+              className="border-foreground group text-primary cursor-pointer border-b border-dashed font-mono text-sm font-medium duration-300 hover:border-white"
               onClick={handleButtonClick}
               onMouseEnter={() => !isMobile && setShowTooltip(true)}
             >
-              <span className="tracking-wider text-white duration-300">
+              <span className="text-primary tracking-wider duration-300">
                 {highRiskItems.length ||
                   mediumRiskItems.length ||
                   lowRiskItems.length}{" "}
                 ITEMS
               </span>
-              <span className="text-foreground tracking-wider duration-300 group-hover:text-white">
+              <span className="text-secondary group-hover:text-primary tracking-wider duration-300">
                 {" "}
                 TO STAGE {Number(currentStage) + 1}
               </span>
