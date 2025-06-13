@@ -13,17 +13,17 @@ import {
 interface GovernanceActivityRepository {
   getActiveSupply(days: DaysEnum): Promise<ActiveSupplyQueryResult | undefined>;
   getProposalsCompare(
-    days: DaysEnum,
+    days: DaysEnum
   ): Promise<ProposalsCompareQueryResult | undefined>;
   getVotesCompare(days: DaysEnum): Promise<VotesCompareQueryResult | undefined>;
   getAverageTurnoutCompare(
-    days: DaysEnum,
+    days: DaysEnum
   ): Promise<AverageTurnoutCompareQueryResult | undefined>;
 }
 
 export function governanceActivity(
   app: Hono,
-  repository: GovernanceActivityRepository,
+  repository: GovernanceActivityRepository
 ) {
   app.openapi(
     createRoute({
@@ -70,8 +70,11 @@ export function governanceActivity(
     async (context) => {
       const { days } = context.req.valid("query");
       const data = await repository.getActiveSupply(days);
-      return context.json({ activeSupply: data?.activeSupply || "0" });
-    },
+      if (!data) {
+        return context.json({ error: "No data found" }, 404);
+      }
+      return context.json({ activeSupply: data.activeSupply }, 200);
+    }
   );
 
   app.openapi(
@@ -122,11 +125,14 @@ export function governanceActivity(
         data.oldProposalsLaunched &&
         data.currentProposalsLaunched / data.oldProposalsLaunched - 1;
 
-      return context.json({
-        ...data,
-        changeRate: changeRate ? Number(Number(changeRate).toFixed(2)) : 0,
-      });
-    },
+      return context.json(
+        {
+          ...data,
+          changeRate: changeRate ? Number(Number(changeRate).toFixed(2)) : 0,
+        },
+        200
+      );
+    }
   );
 
   app.openapi(
@@ -176,11 +182,14 @@ export function governanceActivity(
 
       const changeRate = data.oldVotes && data.currentVotes / data.oldVotes - 1;
 
-      return context.json({
-        ...data,
-        changeRate: changeRate ? Number(Number(changeRate).toFixed(2)) : 0,
-      });
-    },
+      return context.json(
+        {
+          ...data,
+          changeRate: changeRate ? Number(Number(changeRate).toFixed(2)) : 0,
+        },
+        200
+      );
+    }
   );
 
   app.openapi(
@@ -236,8 +245,8 @@ export function governanceActivity(
           ...data,
           changeRate: changeRate ? Number(Number(changeRate).toFixed(2)) : 0,
         },
-        200,
+        200
       );
-    },
+    }
   );
 }

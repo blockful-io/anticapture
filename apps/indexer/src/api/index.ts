@@ -10,6 +10,7 @@ import {
   tokenDistribution,
   tokenHistoricalData,
   assets,
+  proposalsActivity,
   historicalOnchain,
 } from "./controller";
 import { docs } from "./docs";
@@ -29,7 +30,7 @@ const app = new Hono({
           message: validationError.message,
           details: validationError.details,
         },
-        400,
+        400
       );
     }
   },
@@ -55,6 +56,7 @@ const repo = new DrizzleRepository();
 
 tokenDistribution(app, repo);
 governanceActivity(app, repo);
+proposalsActivity(app);
 historicalOnchain(app);
 docs(app, env.API_URL!);
 
