@@ -3,7 +3,7 @@ import { CONTRACT_ADDRESSES } from "@/lib/constants";
 import { DaoIdEnum, NetworkEnum } from "@/lib/enums";
 
 import { env } from "@/env";
-import { ENSGovernorAbi, ENSTokenAbi } from "@/indexer/ens/abi";
+import { UNIGovernorAbi, UNITokenAbi } from "@/indexer/uni/abi";
 
 export default createConfig({
   database: {
@@ -19,17 +19,17 @@ export default createConfig({
     },
   },
   contracts: {
-    ENSToken: {
-      abi: ENSTokenAbi,
+    UNIToken: {
+      abi: UNITokenAbi,
       chain: "ethereum_mainnet",
       address:
-        CONTRACT_ADDRESSES[NetworkEnum.ETHEREUM][DaoIdEnum.ENS]!.token.address,
+        CONTRACT_ADDRESSES[NetworkEnum.ETHEREUM][DaoIdEnum.UNI]!.token.address,
     },
-    ENSGovernor: {
-      abi: ENSGovernorAbi,
+    UNIGovernor: {
+      abi: UNIGovernorAbi,
       chain: "ethereum_mainnet",
       address:
-        CONTRACT_ADDRESSES[NetworkEnum.ETHEREUM][DaoIdEnum.ENS]!.governor,
+        CONTRACT_ADDRESSES[NetworkEnum.ETHEREUM][DaoIdEnum.UNI]!.governor,
     },
   },
 });
