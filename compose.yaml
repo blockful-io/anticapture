@@ -30,8 +30,10 @@ services:
   indexer:
     build:
       context: .
-      dockerfile: infra/indexer/Dockerfile.indexer
-    command: ["npm", "run", "start", "--", "--config", "config/ens.local.config.ts"]
+      dockerfile: apps/indexer/Dockerfile.indexer
+      args:
+        - CONFIG_FILE=config/ens.local.config.ts
+        - SCHEMA=public
     environment:
       - DATABASE_URL=postgres://postgres:admin@indexer-db:5432/postgres
       - DAO_ID=ENS
@@ -39,6 +41,7 @@ services:
       - RPC_URL=http://contracts:8545
       - CHAIN_ID=31337
       - PORT=42069
+
     depends_on:
       indexer-db:
         condition: service_started
@@ -46,6 +49,17 @@ services:
         condition: service_healthy
     ports:
       - "42069:42069"
+    networks:
+      - backend
+
+  gateway:
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - indexer
     networks:
       - backend
 
