@@ -19,6 +19,7 @@ import { TimeInterval } from "@/shared/types/enums/TimeInterval";
 import { useHistoricalBalances } from "@/shared/hooks/graphql-client/useHistoricalBalances";
 import { Pagination } from "@/shared/components/design-system/table/Pagination";
 import { SkeletonRow } from "@/shared/components/skeletons/SkeletonRow";
+import { HoldersAndDelegatesDrawer } from "@/features/holders-and-delegates";
 
 export const TokenHolders = ({
   days,
@@ -27,8 +28,12 @@ export const TokenHolders = ({
   days: TimeInterval;
   daoId: DaoIdEnum;
 }) => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [selectedTokenHolder, setSelectedTokenHolder] = useState<string | null>(
+    null,
+  );
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
-  const router = useRouter();
   const pageLimit: number = 10;
 
   const {
@@ -51,6 +56,20 @@ export const TokenHolders = ({
     addresses || [],
     days,
   );
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const handleOpenDrawer = (address: string) => {
+    setSelectedTokenHolder(address);
+    setIsDrawerOpen(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    setSelectedTokenHolder(null);
+  };
 
   const calculateVariation = (
     currentBalance: string,
@@ -151,7 +170,7 @@ export const TokenHolders = ({
             <button
               className="bg-surface-default text-primary hover:bg-surface-contrast flex cursor-pointer items-center gap-1.5 rounded-md border border-[#3F3F46] px-2 py-1 opacity-0 transition-opacity [tr:hover_&]:opacity-100"
               tabIndex={-1}
-              onClick={(e) => handleDetailsClick(addressValue as Address, e)}
+              onClick={() => handleOpenDrawer(addressValue as Address)}
             >
               <Plus className="size-3.5" />
               <span className="text-sm font-medium">Details</span>
@@ -380,28 +399,38 @@ export const TokenHolders = ({
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <>
       <div className="w-full text-white">
-        <TheTable
-          columns={tokenHoldersColumns}
-          data={tableData}
-          withSorting={true}
-          onRowClick={() => {}}
-          isTableSmall={true}
-        />
+        <div className="flex flex-col gap-2">
+          <TheTable
+            columns={tokenHoldersColumns}
+            data={tableData}
+            withSorting={true}
+            onRowClick={() => {}}
+            isTableSmall={true}
+          />
+        </div>
+        <div>
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            onPrevious={fetchPreviousPage}
+            onNext={fetchNextPage}
+            className="text-white"
+            hasNextPage={pagination.hasNextPage}
+            hasPreviousPage={pagination.hasPreviousPage}
+            isLoading={fetchingMore}
+          />
+        </div>
       </div>
-      <div>
-        <Pagination
-          currentPage={pagination.currentPage}
-          totalPages={pagination.totalPages}
-          onPrevious={fetchPreviousPage}
-          onNext={fetchNextPage}
-          className="text-white"
-          hasNextPage={pagination.hasNextPage}
-          hasPreviousPage={pagination.hasPreviousPage}
-          isLoading={fetchingMore}
+      {selectedTokenHolder && (
+        <HoldersAndDelegatesDrawer
+          isOpen={isDrawerOpen}
+          onClose={handleCloseDrawer}
+          entityType="tokenHolder"
+          address={selectedTokenHolder}
         />
-      </div>
-    </div>
+      )}
+    </>
   );
 };

@@ -1,7 +1,13 @@
 import { useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { useDelegates } from "@/features/holders-and-delegates";
-import { QueryInput_HistoricalVotingPower_DaoId } from "@anticapture/graphql-client";
+import {
+  useDelegates,
+  HoldersAndDelegatesDrawer,
+} from "@/features/holders-and-delegates";
+import {
+  QueryInput_HistoricalVotingPower_DaoId,
+  QueryInput_ProposalsActivity_DaoId,
+} from "@anticapture/graphql-client";
 import { TimeInterval } from "@/shared/types/enums";
 import { TheTable, SkeletonRow } from "@/shared/components";
 import { EnsAvatar } from "@/shared/components/design-system/avatars/ens-avatar/EnsAvatar";
@@ -9,7 +15,7 @@ import { Button } from "@/shared/components/ui/button";
 import { ArrowUpDown, ArrowState } from "@/shared/components/icons";
 import { formatNumberUserReadable, cn } from "@/shared/utils";
 import { Pagination } from "@/shared/components/design-system/table/Pagination";
-import { Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { ProgressCircle } from "./ProgressCircle";
 import { BadgeStatus } from "@/shared/components/design-system/badges/BadgeStatus";
 
@@ -90,6 +96,9 @@ export const Delegates = ({
     orderDirection: sortDirection,
   });
 
+  // Drawer state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedDelegate, setSelectedDelegate] = useState<string | null>(null);
   // Handle sorting for voting power and delegators
   const handleSort = (field: string) => {
     if (sortBy === field) {
@@ -100,6 +109,16 @@ export const Delegates = ({
       setSortBy(field);
       setSortDirection(field === "votingPower" ? "desc" : "asc");
     }
+  };
+
+  const handleOpenDrawer = (address: string) => {
+    setSelectedDelegate(address);
+    setIsDrawerOpen(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    setSelectedDelegate(null);
   };
 
   const tableData = useMemo(() => {
@@ -164,8 +183,6 @@ export const Delegates = ({
       size: 280,
       cell: ({ row }) => {
         const address = row.getValue("address") as string;
-        const type = row.getValue("type") as string;
-
         if (loading) {
           return (
             <div className="flex h-10 items-center gap-3 p-2">
@@ -192,7 +209,7 @@ export const Delegates = ({
             <button
               className="bg-surface-default text-primary hover:bg-surface-contrast flex cursor-pointer items-center gap-1.5 rounded-md border border-[#3F3F46] px-2 py-1 opacity-0 transition-opacity duration-300 [tr:hover_&]:opacity-100"
               tabIndex={-1}
-              onClick={(e) => {}}
+              onClick={(e) => handleOpenDrawer(address)}
             >
               <Plus className="size-3.5" />
               <span className="text-sm font-medium">Details</span>
@@ -486,27 +503,39 @@ export const Delegates = ({
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <TheTable
-        columns={delegateColumns}
-        data={tableData}
-        withPagination={true}
-        withSorting={true}
-        onRowClick={(row) => {
-          console.log("Row clicked:", row);
-        }}
-        isTableSmall={true}
-      />
+    <>
+      <div className="flex flex-col gap-2">
+        <TheTable
+          columns={delegateColumns}
+          data={tableData}
+          withPagination={true}
+          withSorting={true}
+          onRowClick={(row) => {
+            console.log("Row clicked:", row);
+          }}
+          isTableSmall={true}
+        />
 
-      <Pagination
-        currentPage={pagination.currentPage}
-        totalPages={pagination.totalPages}
-        onPrevious={fetchPreviousPage}
-        onNext={fetchNextPage}
-        hasNextPage={pagination.hasNextPage}
-        hasPreviousPage={pagination.hasPreviousPage}
-        isLoading={fetchingMore}
-      />
-    </div>
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPrevious={fetchPreviousPage}
+          onNext={fetchNextPage}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          isLoading={fetchingMore}
+        />
+      </div>
+      {selectedDelegate && (
+        <HoldersAndDelegatesDrawer
+          isOpen={isDrawerOpen}
+          onClose={handleCloseDrawer}
+          entityType="delegate"
+          address={selectedDelegate}
+          daoId={daoId as unknown as QueryInput_ProposalsActivity_DaoId}
+          fromDate={fromDate}
+        />
+      )}
+    </>
   );
 };
