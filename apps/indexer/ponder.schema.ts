@@ -32,7 +32,6 @@ export const token = onchainTable("token", (drizzle) => ({
 
 export const account = onchainTable("account", (drizzle) => ({
   id: drizzle.text().primaryKey(),
-  type: drizzle.text().default("EOA").notNull(),
 }));
 
 export const accountBalance = onchainTable(
@@ -79,7 +78,7 @@ export const votingPowerHistory = onchainTable(
   "voting_power_history",
   (drizzle) => ({
     transactionHash: drizzle.text("transaction_hash").notNull(),
-    daoId: drizzle.text("dao_id"),
+    daoId: drizzle.text("dao_id").notNull(),
     accountId: drizzle.text("account_id"),
     votingPower: drizzle.bigint("voting_power").notNull(),
     timestamp: drizzle.bigint().notNull(),
@@ -95,7 +94,7 @@ export const delegation = onchainTable(
   "delegations",
   (drizzle) => ({
     transactionHash: drizzle.text("transaction_hash").notNull(),
-    daoId: drizzle.text("dao_id"),
+    daoId: drizzle.text("dao_id").notNull(),
     delegateAccountId: drizzle.text("delegate_account_id"),
     delegatorAccountId: drizzle.text("delegator_account_id"),
     delegatedValue: drizzle.bigint("delegated_value").notNull().default(0n),
@@ -115,7 +114,7 @@ export const transfer = onchainTable(
   "transfers",
   (drizzle) => ({
     transactionHash: drizzle.text("transaction_hash").notNull(),
-    daoId: drizzle.text("dao_id"),
+    daoId: drizzle.text("dao_id").notNull(),
     tokenId: drizzle.text("token_id"),
     amount: drizzle.bigint(),
     fromAccountId: drizzle.text("from_account_id"),
@@ -134,7 +133,7 @@ export const votesOnchain = onchainTable(
   "votes_onchain",
   (drizzle) => ({
     id: drizzle.text().primaryKey(),
-    daoId: drizzle.text("dao_id"),
+    daoId: drizzle.text("dao_id").notNull(),
     voterAccountId: drizzle.text("voter_account_id"),
     proposalId: drizzle.text("proposal_id"),
     support: drizzle.text(),
@@ -152,7 +151,7 @@ export const proposalsOnchain = onchainTable(
   "proposals_onchain",
   (drizzle) => ({
     id: drizzle.text().primaryKey(),
-    daoId: drizzle.text("dao_id"),
+    daoId: drizzle.text("dao_id").notNull(),
     proposerAccountId: drizzle.text("proposer_account_id"),
     targets: drizzle.json(),
     values: drizzle.json(),
@@ -163,9 +162,9 @@ export const proposalsOnchain = onchainTable(
     description: drizzle.text(),
     timestamp: drizzle.bigint(),
     status: drizzle.text(),
-    forVotes: drizzle.bigint("for_votes"),
-    againstVotes: drizzle.bigint("against_votes"),
-    abstainVotes: drizzle.bigint("abstain_votes"),
+    forVotes: drizzle.bigint("for_votes").default(0n).notNull(),
+    againstVotes: drizzle.bigint("against_votes").default(0n).notNull(),
+    abstainVotes: drizzle.bigint("abstain_votes").default(0n).notNull(),
   }),
   (table) => ({
     proposalsOnchainProposerIdx: index().on(table.proposerAccountId),

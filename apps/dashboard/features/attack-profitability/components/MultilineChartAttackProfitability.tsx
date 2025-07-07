@@ -49,7 +49,7 @@ export const MultilineChartAttackProfitability = ({
 
   const { data: treasuryAssetNonDAOToken = [] } = useTreasuryAssetNonDaoToken(
     daoId.toUpperCase() as DaoIdEnum,
-    days,
+    TimeInterval.ONE_YEAR,
   );
 
   const { data: daoTokenPriceHistoricalData = { prices: [] } } =
@@ -65,14 +65,10 @@ export const MultilineChartAttackProfitability = ({
     },
   );
   useEffect(() => {
-    if (
+    setMocked(
       timeSeriesData !== undefined &&
-      Object.values(timeSeriesData).every((data) => data.length === 0)
-    ) {
-      setMocked(true);
-    } else {
-      setMocked(false);
-    }
+        Object.values(timeSeriesData).every((data) => data.length === 0),
+    );
   }, [timeSeriesData]);
 
   let delegatedSupplyChart;
@@ -110,15 +106,19 @@ export const MultilineChartAttackProfitability = ({
       treasuryNonDAO: normalizeDatasetTreasuryNonDaoToken(
         treasuryAssetNonDAOToken,
         "treasuryNonDAO",
-      ),
+      )
+        .reverse()
+        .slice(365 - Number(days.split("d")[0])),
       all: normalizeDatasetAllTreasury(
         selectedPriceHistory,
         "all",
         treasuryAssetNonDAOToken,
         treasurySupplyChart,
-      ),
+      ).slice(365 - Number(days.split("d")[0])),
       quorum: quorumValue
-        ? normalizeDataset(selectedPriceHistory, "quorum", quorumValue)
+        ? normalizeDataset(selectedPriceHistory, "quorum", quorumValue).slice(
+            365 - Number(days.split("d")[0]),
+          )
         : [],
       delegated: delegatedSupplyChart
         ? normalizeDataset(
@@ -126,7 +126,7 @@ export const MultilineChartAttackProfitability = ({
             "delegated",
             null,
             delegatedSupplyChart,
-          )
+          ).slice(365 - Number(days.split("d")[0]))
         : [],
     };
   } else {
@@ -140,7 +140,6 @@ export const MultilineChartAttackProfitability = ({
   );
 
   let lastKnownValues: Record<string, number | null> = {};
-
   const chartData = Array.from(allDates)
     .sort((a, b) => a - b)
     .map((date) => {
@@ -160,7 +159,6 @@ export const MultilineChartAttackProfitability = ({
 
       return dataPoint;
     });
-
   return (
     <div className="sm:border-light-dark sm:bg-surface-default text-primary relative flex h-[300px] w-full items-center justify-center rounded-lg">
       {mocked && <ResearchPendingChartBlur />}

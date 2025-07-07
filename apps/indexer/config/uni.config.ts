@@ -5,6 +5,8 @@ import { DaoIdEnum, NetworkEnum } from "@/lib/enums";
 import { env } from "@/env";
 import { UNIGovernorAbi, UNITokenAbi } from "@/indexer/uni/abi";
 
+const UNI_CONTRACTS = CONTRACT_ADDRESSES[NetworkEnum.ETHEREUM][DaoIdEnum.UNI]!;
+
 export default createConfig({
   database: {
     kind: "postgres",
@@ -22,14 +24,14 @@ export default createConfig({
     UNIToken: {
       abi: UNITokenAbi,
       chain: "ethereum_mainnet",
-      address:
-        CONTRACT_ADDRESSES[NetworkEnum.ETHEREUM][DaoIdEnum.UNI]!.token.address,
+      address: UNI_CONTRACTS.token.address,
+      startBlock: UNI_CONTRACTS.token.startBlock,
     },
     UNIGovernor: {
       abi: UNIGovernorAbi,
       chain: "ethereum_mainnet",
-      address:
-        CONTRACT_ADDRESSES[NetworkEnum.ETHEREUM][DaoIdEnum.UNI]!.governor,
+      address: UNI_CONTRACTS.governor!.address,
+      startBlock: UNI_CONTRACTS.governor!.startBlock,
     },
   },
 });

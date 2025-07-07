@@ -1,9 +1,6 @@
-import { Abi, Address, zeroAddress } from "viem";
+import { Address, zeroAddress } from "viem";
 
 import { DaoIdEnum, NetworkEnum } from "./enums";
-import { UNITokenAbi } from "@/indexer/uni";
-import { ENSTokenAbi } from "@/indexer/ens";
-import { ARBTokenAbi } from "@/indexer/arb";
 
 export const DAYS_IN_YEAR = 365;
 export const SECONDS_PER_BLOCK = 12; // Ethereum average
@@ -14,36 +11,47 @@ export const CONTRACT_ADDRESSES: Record<
     Record<
       DaoIdEnum,
       {
-        token: { address: Address; decimals: number; abi: Abi };
-        governor?: Address;
+        token: { address: Address; decimals: number; startBlock: number };
+        governor?: { address: Address; startBlock: number };
       }
     >
   >
 > = {
   [NetworkEnum.ETHEREUM]: {
     [DaoIdEnum.UNI]: {
+      // https://etherscan.io/address/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984
       token: {
         address: "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
         decimals: 18,
-        abi: UNITokenAbi,
+        startBlock: 10861674,
       },
-      governor: "0x408ED6354d4973f66138C91495F2f2FCbd8724C3",
+      // https://etherscan.io/address/0x408ED6354d4973f66138C91495F2f2FCbd8724C3
+      governor: {
+        address: "0x408ED6354d4973f66138C91495F2f2FCbd8724C3",
+        startBlock: 13059157,
+      },
     },
     [DaoIdEnum.ENS]: {
+      // https://etherscan.io/address/0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72
       token: {
         address: "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
         decimals: 18,
-        abi: ENSTokenAbi,
+        startBlock: 9380410,
       },
-      governor: "0x323a76393544d5ecca80cd6ef2a560c6a395b7e3",
+      // https://etherscan.io/address/0x323a76393544d5ecca80cd6ef2a560c6a395b7e3
+      governor: {
+        address: "0x323a76393544d5ecca80cd6ef2a560c6a395b7e3",
+        startBlock: 13533772,
+      },
     },
   },
   [NetworkEnum.ARBITRUM]: {
     [DaoIdEnum.ARB]: {
+      // https://arbiscan.io/address/0x912CE59144191C1204E64559FE8253a0e49E6548
       token: {
         address: "0x912CE59144191C1204E64559FE8253a0e49E6548",
         decimals: 18,
-        abi: ARBTokenAbi,
+        startBlock: 70398200,
       },
     },
   },
@@ -52,14 +60,17 @@ export const CONTRACT_ADDRESSES: Record<
       token: {
         address: "0x244dE6b06E7087110b94Cde88A42d9aBA17efa52",
         decimals: 18,
-        abi: ENSTokenAbi,
+        startBlock: 22635098,
       },
-      governor: "0x7c28FC9709650D49c8d0aED2f6ece6b191F192a9",
+      governor: {
+        address: "0x7c28FC9709650D49c8d0aED2f6ece6b191F192a9",
+        startBlock: 22635098,
+      },
     },
   },
 } as const;
 
-export const TREASURY_ADDRESSES = {
+export const TREASURY_ADDRESSES: Record<DaoIdEnum, Record<string, Address>> = {
   [DaoIdEnum.UNI]: {
     timelock: "0x1a9C8182C09F50C8318d769245beA52c32BE35BC",
     treasuryVester1: "0x4750c43867EF5F89869132ecCF19B9b6C4286E1a",
@@ -76,7 +87,7 @@ export const TREASURY_ADDRESSES = {
   [DaoIdEnum.ARB]: {},
 };
 
-export const CEXAddresses = {
+export const CEXAddresses: Record<DaoIdEnum, Record<string, Address>> = {
   [DaoIdEnum.UNI]: {
     BinanceHotWallet: "0x5a52E96BAcdaBb82fd05763E25335261B270Efcb",
     BinanceHotWallet2: "0x28C6c06298d514Db089934071355E5743bf21d60",
@@ -137,7 +148,7 @@ export const CEXAddresses = {
   [DaoIdEnum.ARB]: {},
 };
 
-export const DEXAddresses = {
+export const DEXAddresses: Record<DaoIdEnum, Record<string, Address>> = {
   [DaoIdEnum.UNI]: {
     // ArbitrumL1ERC20Gateway: "0xa3a7b6f88361f48403514059f1f16c8e78d60eec",
     Uniswap_UNI_ETH_V3_03: "0x1d42064Fc4Beb5F8aAF85F4617AE8b3b5B8Bd801",
@@ -160,7 +171,7 @@ export const DEXAddresses = {
   [DaoIdEnum.ARB]: {},
 };
 
-export const LendingAddresses = {
+export const LendingAddresses: Record<DaoIdEnum, Record<string, Address>> = {
   [DaoIdEnum.UNI]: {
     AaveEthUni: "0xF6D2224916DDFbbab6e6bd0D1B7034f4Ae0CaB18",
     MorphoBlue: "0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb",
@@ -173,7 +184,15 @@ export const LendingAddresses = {
   [DaoIdEnum.ARB]: {},
 };
 
-export const BurningAddresses = {
+export const BurningAddresses: Record<
+  DaoIdEnum,
+  {
+    ZeroAddress: Address;
+    Dead: Address;
+    TokenContract: Address;
+    Airdrop?: Address;
+  }
+> = {
   [DaoIdEnum.UNI]: {
     ZeroAddress: zeroAddress,
     Dead: "0x000000000000000000000000000000000000dEaD",

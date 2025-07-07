@@ -5,6 +5,8 @@ import { DaoIdEnum, NetworkEnum } from "@/lib/enums";
 import { env } from "@/env";
 import { ENSGovernorAbi, ENSTokenAbi } from "@/indexer/ens/abi";
 
+const ENS_CONTRACTS = CONTRACT_ADDRESSES[NetworkEnum.ETHEREUM][DaoIdEnum.ENS]!;
+
 export default createConfig({
   database: {
     kind: "postgres",
@@ -22,14 +24,14 @@ export default createConfig({
     ENSToken: {
       abi: ENSTokenAbi,
       chain: "ethereum_mainnet",
-      address:
-        CONTRACT_ADDRESSES[NetworkEnum.ETHEREUM][DaoIdEnum.ENS]!.token.address,
+      address: ENS_CONTRACTS.token.address,
+      startBlock: ENS_CONTRACTS.token.startBlock,
     },
     ENSGovernor: {
       abi: ENSGovernorAbi,
       chain: "ethereum_mainnet",
-      address:
-        CONTRACT_ADDRESSES[NetworkEnum.ETHEREUM][DaoIdEnum.ENS]!.governor,
+      address: ENS_CONTRACTS.governor!.address,
+      startBlock: ENS_CONTRACTS.governor!.startBlock,
     },
   },
 });
