@@ -8,6 +8,8 @@ import { cn } from "@/shared/utils";
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { useScreenSize } from "@/shared/hooks";
+import { DelegateProposalsActivity } from "./DelegateProposalsActivity";
+import { QueryInput_ProposalsActivity_DaoId } from "@anticapture/graphql-client";
 
 export type EntityType = "delegate" | "tokenHolder";
 
@@ -16,44 +18,53 @@ interface HoldersAndDelegatesDrawerProps {
   onClose: () => void;
   entityType: EntityType;
   address: string;
+  daoId: QueryInput_ProposalsActivity_DaoId;
+  fromDate?: number;
 }
-
-const entities = {
-  delegate: {
-    title: "Delegate",
-    tabs: [
-      { id: "votes", label: "Votes", content: <>Votes</> },
-      { id: "votingPower", label: "Voting Power", content: <>Voting Power</> },
-      {
-        id: "delegationHistory",
-        label: "Delegation History",
-        content: <>Delegation History</>,
-      },
-    ],
-  },
-  tokenHolder: {
-    title: "Token Holder",
-    tabs: [
-      {
-        id: "delegationHistory",
-        label: "Delegation History",
-        content: <>Delegation History</>,
-      },
-      {
-        id: "balanceHistory",
-        label: "Balance History",
-        content: <>Balance History</>,
-      },
-    ],
-  },
-};
 
 export const HoldersAndDelegatesDrawer = ({
   isOpen,
   onClose,
   entityType,
   address,
+  daoId,
+  fromDate
 }: HoldersAndDelegatesDrawerProps) => {
+
+  const entities = {
+    delegate: {
+      title: "Delegate",
+      tabs: [
+        { id: "votes", label: "Votes", content: <DelegateProposalsActivity
+          address={address}
+          daoId={daoId}
+          fromDate={fromDate}
+        /> },
+        { id: "votingPower", label: "Voting Power", content: <>Voting Power</> },
+        {
+          id: "delegationHistory",
+          label: "Delegation History",
+          content: <>Delegation History</>,
+        },
+      ],
+    },
+    tokenHolder: {
+      title: "Token Holder",
+      tabs: [
+        {
+          id: "delegationHistory",
+          label: "Delegation History",
+          content: <>Delegation History</>,
+        },
+        {
+          id: "balanceHistory",
+          label: "Balance History",
+          content: <>Balance History</>,
+        },
+      ],
+    },
+  };
+
   const [activeTab, setActiveTab] = useState(entities[entityType].tabs[0].id);
 
   const { isMobile } = useScreenSize();
