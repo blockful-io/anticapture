@@ -13,9 +13,9 @@ import { Governor } from "@/interfaces/governor";
 import { dao } from "ponder:schema";
 
 export function GovernorIndexer(governor: Governor) {
-  const daoId = DaoIdEnum.UNI;
+  const daoId = DaoIdEnum.OP;
 
-  ponder.on("UNIGovernor:setup", async ({ context }) => {
+  ponder.on(`OPGovernor:setup`, async ({ context }) => {
     const votingPeriod = await governor.getVotingPeriod();
     const quorum = await governor.getQuorum();
     const votingDelay = await governor.getVotingDelay();
@@ -32,27 +32,27 @@ export function GovernorIndexer(governor: Governor) {
     });
   });
 
-  ponder.on("UNIGovernor:VoteCast", async ({ event, context }) => {
+  ponder.on(`OPGovernor:VoteCast`, async ({ event, context }) => {
     await voteCast(event, context, daoId);
   });
 
-  ponder.on("UNIGovernor:ProposalCreated", async ({ event, context }) => {
+  ponder.on(`OPGovernor:ProposalCreated`, async ({ event, context }) => {
     await proposalCreated(event, context, daoId);
   });
 
-  ponder.on("UNIGovernor:ProposalCanceled", async ({ event, context }) => {
+  ponder.on(`OPGovernor:ProposalCanceled`, async ({ event, context }) => {
     await proposalCanceled(event, context, daoId);
   });
 
-  ponder.on("UNIGovernor:ProposalExecuted", async ({ event, context }) => {
+  ponder.on(`OPGovernor:ProposalExecuted`, async ({ event, context }) => {
     await proposalExecuted(event, context, daoId);
   });
 
-  ponder.on("UNIToken:DelegateChanged", async ({ event, context }) => {
+  ponder.on(`OPToken:DelegateChanged`, async ({ event, context }) => {
     await delegateChanged(event, context, daoId);
   });
 
-  ponder.on("UNIToken:DelegateVotesChanged", async ({ event, context }) => {
+  ponder.on(`OPToken:DelegateVotesChanged`, async ({ event, context }) => {
     await delegatedVotesChanged(event, context, daoId);
   });
 }
