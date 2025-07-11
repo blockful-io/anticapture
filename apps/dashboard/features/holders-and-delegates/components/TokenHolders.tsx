@@ -420,12 +420,15 @@ export const TokenHolders = ({
           />
         </div>
       </div>
-        <HoldersAndDelegatesDrawer
-          isOpen={!!selectedTokenHolder}
-          onClose={handleCloseDrawer}
-          entityType="tokenHolder"
-          address={selectedTokenHolder || "0x0000000000000000000000000000000000000000"}
-        />
+      <HoldersAndDelegatesDrawer
+        isOpen={!!selectedTokenHolder}
+        onClose={handleCloseDrawer}
+        entityType="tokenHolder"
+        address={
+          selectedTokenHolder || "0x0000000000000000000000000000000000000000"
+        }
+        daoId={daoId}
+      />
     </>
   );
 };

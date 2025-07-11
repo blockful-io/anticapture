@@ -1,13 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { Drawer, DrawerContent } from "@/shared/components/ui/drawer";
 import { EnsAvatar } from "@/shared/components/design-system/avatars/ens-avatar/EnsAvatar";
 import { Button } from "@/shared/components/ui/button";
 import { X } from "lucide-react";
 import { cn } from "@/shared/utils";
-import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { useScreenSize } from "@/shared/hooks";
+import { DelegationHistoryTable } from "./DelegationHistoryTable";
+import { DaoIdEnum } from "@/shared/types/daos";
+import { CopyAndPasteButton } from "@/shared/components/buttons/CopyAndPasteButton";
+import { VotingPower } from "@/features/holders-and-delegates/components/VotingPower";
 
 export type EntityType = "delegate" | "tokenHolder";
 
@@ -16,44 +20,50 @@ interface HoldersAndDelegatesDrawerProps {
   onClose: () => void;
   entityType: EntityType;
   address: string;
+  daoId: DaoIdEnum;
 }
-
-const entities = {
-  delegate: {
-    title: "Delegate",
-    tabs: [
-      { id: "votes", label: "Votes", content: <>Votes</> },
-      { id: "votingPower", label: "Voting Power", content: <>Voting Power</> },
-      {
-        id: "delegationHistory",
-        label: "Delegation History",
-        content: <>Delegation History</>,
-      },
-    ],
-  },
-  tokenHolder: {
-    title: "Token Holder",
-    tabs: [
-      {
-        id: "delegationHistory",
-        label: "Delegation History",
-        content: <>Delegation History</>,
-      },
-      {
-        id: "balanceHistory",
-        label: "Balance History",
-        content: <>Balance History</>,
-      },
-    ],
-  },
-};
 
 export const HoldersAndDelegatesDrawer = ({
   isOpen,
   onClose,
   entityType,
   address,
+  daoId,
 }: HoldersAndDelegatesDrawerProps) => {
+  const entities = {
+    delegate: {
+      title: "Delegate",
+      tabs: [
+        { id: "votes", label: "Votes", content: <>Votes</> },
+        {
+          id: "votingPower",
+          label: "Voting Power",
+          content: <VotingPower address={address} daoId={daoId} />,
+        },
+        {
+          id: "delegationHistory",
+          label: "Delegation History",
+          content: <>Delegation History</>,
+        },
+      ],
+    },
+    tokenHolder: {
+      title: "Token Holder",
+      tabs: [
+        {
+          id: "delegationHistory",
+          label: "Delegation History",
+          content: <DelegationHistoryTable address={address} daoId={daoId} />,
+        },
+        {
+          id: "balanceHistory",
+          label: "Balance History",
+          content: <>Balance History</>,
+        },
+      ],
+    },
+  };
+
   const [activeTab, setActiveTab] = useState(entities[entityType].tabs[0].id);
 
   const { isMobile } = useScreenSize();
@@ -86,10 +96,10 @@ export const HoldersAndDelegatesDrawer = ({
                     nameClassName="text-lg leading-[18px]"
                     containerClassName="gap-2"
                   />
+                  <CopyAndPasteButton textToCopy={address as `0x${string}`} />
                 </div>
               </div>
 
-              {/* Close Button */}
               <Button
                 variant="ghost"
                 size="sm"
@@ -124,7 +134,9 @@ export const HoldersAndDelegatesDrawer = ({
               </TabsList>
             </Tabs>
           </div>
-          {renderTabContent(activeTab)}
+          <div className="flex h-full w-full flex-col gap-4 p-4">
+            {renderTabContent(activeTab)}
+          </div>
         </div>
       </DrawerContent>
     </Drawer>
